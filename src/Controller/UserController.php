@@ -37,7 +37,8 @@ class UserController extends AbstractController
         $user = new User();
         $encodedPassword = $passwordEncoder->encodePassword($user, $password);
         $user->setEmail($email)
-            ->setPassword($encodedPassword);
+            ->setPassword($encodedPassword)
+            ->setApiToken(md5("$email:$password"));
 
         try {
             $em->persist($user);
@@ -65,6 +66,11 @@ class UserController extends AbstractController
      */
     public function login()
     {
-        return $this->json(['result' => true]);
+        return $this->json(
+            ['user' => $this->getUser()],
+            200,
+            [],
+            ['groups' => ['api']]
+        );
     }
 }

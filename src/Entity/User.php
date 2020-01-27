@@ -36,6 +36,12 @@ class User implements UserInterface
     private $roles = [];
 
     /**
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @Groups("api")
+     */
+    private $apiToken;
+
+    /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
@@ -96,6 +102,17 @@ class User implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+        return $this;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
         return $this;
     }
 
