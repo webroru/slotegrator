@@ -13,6 +13,7 @@ class Lottery
 {
     private const MONEY_INTERVAL = [10, 1000];
     private const LOYALTY_INTERVAL = [10, 1000];
+    private const CONVERSION_RATE = 10;
 
     private $em;
     private $security;
@@ -95,6 +96,24 @@ class Lottery
             $this->em->flush();
         }
         return $result;
+    }
+
+    public function convertMoney(Winning $winning): bool
+    {
+        $amount = $winning->getAmount() * self::CONVERSION_RATE;
+        $result = $this->game->send($this->security->getUser()->getId(), $amount);
+        if ($result === true) {
+            $winning->setFinished();
+            $this->em->flush();
+        }
+        return $result;
+    }
+
+    public function refuse(Winning $winning): bool
+    {
+        $winning->setFinished();
+        $this->em->flush();
+        return true;
     }
 
     private function getMoney(): Winning

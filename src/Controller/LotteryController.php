@@ -137,4 +137,76 @@ class LotteryController extends AbstractController
             'result' => $lottery->sendLoyalty($winning),
         ]);
     }
+
+    /**
+     * @Route("/convertMoney", name="api_convert_money", methods={"POST"})
+     * @IsGranted("ROLE_USER")
+     */
+    public function convertMoney(Request $request, Lottery $lottery, EntityManagerInterface $em)
+    {
+        $winningId = $request->request->get('winning_id');
+        /** @var Winning $winning */
+        $winning = $em->find(Winning::class, $winningId);
+
+        if (!$winning) {
+            return $this->json([
+                'errors' => ['Winning not found']
+            ], 404);
+        }
+
+        $errors = [];
+        if ($winning->getIsFinished()) {
+            $errors[] = 'Award has already been sent';
+        }
+
+        if ($winning->getAward()->getType() !== Award::TYPE_MONEY) {
+            $errors[] = 'Incorrect Award type';
+        }
+
+        if (!$errors) {
+            return $this->json([
+                'errors' => $errors,
+            ], 400);
+        }
+
+        return $this->json([
+            'result' => $lottery->convertMoney($winning),
+        ]);
+    }
+
+    /**
+     * @Route("/refusePrize", name="api_refuse_prize", methods={"POST"})
+     * @IsGranted("ROLE_USER")
+     */
+    public function refuse(Request $request, Lottery $lottery, EntityManagerInterface $em)
+    {
+        $winningId = $request->request->get('winning_id');
+        /** @var Winning $winning */
+        $winning = $em->find(Winning::class, $winningId);
+
+        if (!$winning) {
+            return $this->json([
+                'errors' => ['Winning not found']
+            ], 404);
+        }
+
+        $errors = [];
+        if ($winning->getIsFinished()) {
+            $errors[] = 'Award has already been sent';
+        }
+
+        if ($winning->getAward()->getType() !== Award::TYPE_PRIZE) {
+            $errors[] = 'Incorrect Award type';
+        }
+
+        if (!$errors) {
+            return $this->json([
+                'errors' => $errors,
+            ], 400);
+        }
+
+        return $this->json([
+            'result' => $lottery->convertMoney($winning),
+        ]);
+    }
 }
