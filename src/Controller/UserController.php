@@ -15,14 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/", name="api_home")
-     */
-    public function home()
-    {
-        return $this->json(['result' => true]);
-    }
-
-    /**
      * @Route("/register", name="api_register", methods={"POST"})
      */
     public function register(EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, Request $request)

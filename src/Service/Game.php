@@ -6,7 +6,7 @@ namespace App\Service;
 
 class Game
 {
-    public function send(string $userId, int $amount): bool
+    public function send(int $userId, int $amount): bool
     {
         // Game Gate usage emulation.
         return true;

@@ -47,6 +47,10 @@ class LotteryController extends AbstractController
         }
 
         $errors = [];
+        if (!$accountNumber) {
+            $errors[] = 'Account Number has not been specified';
+        }
+
         if ($winning->getIsFinished()) {
             $errors[] = 'Award has already been sent';
         }
@@ -55,7 +59,7 @@ class LotteryController extends AbstractController
             $errors[] = 'Incorrect Award type';
         }
 
-        if (!$errors) {
+        if ($errors) {
             return $this->json([
                 'errors' => $errors,
             ], 400);
@@ -91,7 +95,7 @@ class LotteryController extends AbstractController
             $errors[] = 'Incorrect Award type';
         }
 
-        if (!$errors) {
+        if ($errors) {
             return $this->json([
                 'errors' => $errors,
             ], 400);
@@ -109,6 +113,7 @@ class LotteryController extends AbstractController
     public function transferPrize(Request $request, Lottery $lottery, EntityManagerInterface $em)
     {
         $winningId = $request->request->get('winning_id');
+        $address = $request->request->get('address');
         /** @var Winning $winning */
         $winning = $em->find(Winning::class, $winningId);
 
@@ -119,6 +124,10 @@ class LotteryController extends AbstractController
         }
 
         $errors = [];
+        if (!$address) {
+            $errors[] = 'Address has not been specified';
+        }
+
         if ($winning->getIsFinished()) {
             $errors[] = 'Award has already been sent';
         }
@@ -127,14 +136,14 @@ class LotteryController extends AbstractController
             $errors[] = 'Incorrect Award type';
         }
 
-        if (!$errors) {
+        if ($errors) {
             return $this->json([
                 'errors' => $errors,
             ], 400);
         }
 
         return $this->json([
-            'result' => $lottery->sendLoyalty($winning),
+            'result' => $lottery->sendPrize($winning, $address),
         ]);
     }
 
@@ -163,7 +172,7 @@ class LotteryController extends AbstractController
             $errors[] = 'Incorrect Award type';
         }
 
-        if (!$errors) {
+        if ($errors) {
             return $this->json([
                 'errors' => $errors,
             ], 400);
@@ -199,14 +208,14 @@ class LotteryController extends AbstractController
             $errors[] = 'Incorrect Award type';
         }
 
-        if (!$errors) {
+        if ($errors) {
             return $this->json([
                 'errors' => $errors,
             ], 400);
         }
 
         return $this->json([
-            'result' => $lottery->convertMoney($winning),
+            'result' => $lottery->refuse($winning),
         ]);
     }
 }
