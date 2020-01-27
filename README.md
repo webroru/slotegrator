@@ -252,3 +252,9 @@
 
     `curl -H "Content-Type: application/json" -H "X-AUTH-TOKEN: 3bf8fdee9b0790624e21e2b4117fe342" -X POST -d '{"winning_id":1}' http://app.local:8080/refusePrize`
 
+
+### Обработка очереди ###
+
+Для запуска обработки очереди неоплаченных выйгрышей необходимо запустить консольную команду:
+
+`docker-compose exec php php bin/console messenger:consume --limit=N`, где N — количество обрабатываемых выйгрышей

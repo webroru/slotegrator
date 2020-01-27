@@ -1,9 +1,14 @@
-FROM php:7-fpm
+FROM php:7.3-fpm
 
 RUN apt-get update \
     && apt-get install -y \
         git \
-        unzip
+        unzip \
+        librabbitmq-dev
+
+# Install amqp
+RUN pecl install amqp \
+    && docker-php-ext-enable amqp
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \

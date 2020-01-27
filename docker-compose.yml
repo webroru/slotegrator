@@ -1,14 +1,11 @@
 version: '3'
 
 services:
-#  rabbitmq:
-#    image: rabbitmq:management
-#    environment:
-#      RABBITMQ_DEFAULT_USER: symfony
-#      RABBITMQ_DEFAULT_PASS: symfony
-#    ports:
-#      - 172.16.239.1:15672:15672
-#      - 172.16.239.1:8080:8080
+  rabbitmq:
+    image: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: symfony
+      RABBITMQ_DEFAULT_PASS: symfony
   mysql:
     image: mysql:5.7
     volumes:
@@ -23,8 +20,6 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-#    depends_on:
-#      - mysql
     volumes:
       - ./:/var/www/html
       - ./temp/app/logs:/var/www/html/var/logs

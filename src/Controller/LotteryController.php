@@ -6,11 +6,13 @@ namespace App\Controller;
 
 use App\Entity\Award;
 use App\Entity\Winning;
+use App\Message\SendMoney;
 use App\Service\Lottery;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LotteryController extends AbstractController
@@ -33,7 +35,7 @@ class LotteryController extends AbstractController
      * @Route("/transferMoney", name="api_transfer_money", methods={"POST"})
      * @IsGranted("ROLE_USER")
      */
-    public function transferMoney(Request $request, Lottery $lottery, EntityManagerInterface $em)
+    public function transferMoney(Request $request, Lottery $lottery, EntityManagerInterface $em, MessageBusInterface $bus)
     {
         $winningId = $request->request->get('winning_id');
         $accountNumber = $request->request->get('account_number');
@@ -65,8 +67,13 @@ class LotteryController extends AbstractController
             ], 400);
         }
 
+        $result = $lottery->sendMoney($winning, $accountNumber);
+        if (!$result) {
+            $bus->dispatch(new SendMoney($winning->getId(), $accountNumber));
+        }
+
         return $this->json([
-            'result' => $lottery->sendMoney($winning, $accountNumber),
+            'result' => $result,
         ]);
     }
 
