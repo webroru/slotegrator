@@ -75,7 +75,7 @@ class Lottery
     public function sendLoyalty(Winning $winning): bool
     {
         $amount = $winning->getAmount();
-        $result = $this->game->send($this->security->getUser()->getId(), $amount);
+        $result = $this->game->send($winning->getUser()->getId(), $amount);
         if ($result === true) {
             $winning->setFinished();
             $this->em->flush();
@@ -101,7 +101,7 @@ class Lottery
     public function convertMoney(Winning $winning): bool
     {
         $amount = $winning->getAmount() * self::CONVERSION_RATE;
-        $result = $this->game->send($this->security->getUser()->getId(), $amount);
+        $result = $this->game->send($winning->getUser()->getId(), $amount);
         if ($result === true) {
             $winning->setFinished();
             $this->em->flush();

@@ -258,3 +258,8 @@
 Для запуска обработки очереди неоплаченных выйгрышей необходимо запустить консольную команду:
 
 `docker-compose exec php php bin/console messenger:consume --limit=N`, где N — количество обрабатываемых выйгрышей
+
+
+### Юнит-Тесты ###
+
+`docker-compose exec php php bin/phpunit`
