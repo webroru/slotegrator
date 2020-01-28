@@ -13,26 +13,28 @@ class Lottery
 {
     private const MONEY_INTERVAL = [10, 1000];
     private const LOYALTY_INTERVAL = [10, 1000];
-    private const CONVERSION_RATE = 10;
 
     private $em;
     private $security;
     private $payment;
     private $game;
     private $shipping;
+    private $conversion;
 
     public function __construct(
         EntityManagerInterface $em,
         Security $security,
         Payment $payment,
         Game $game,
-        Shipping $shipping
+        Shipping $shipping,
+        Conversion $conversion
     ) {
         $this->em = $em;
         $this->security = $security;
         $this->payment = $payment;
         $this->game = $game;
         $this->shipping = $shipping;
+        $this->conversion = $conversion;
     }
 
     public function getRandomAward(): Winning
@@ -100,7 +102,7 @@ class Lottery
 
     public function convertMoney(Winning $winning): bool
     {
-        $amount = $winning->getAmount() * self::CONVERSION_RATE;
+        $amount = $this->conversion->moneyToLoyalty($winning->getAmount());
         $result = $this->game->send($winning->getUser()->getId(), $amount);
         if ($result === true) {
             $winning->setFinished();
